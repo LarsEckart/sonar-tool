@@ -26,8 +26,9 @@ func New(version string, stdout, stderr io.Writer) *cli.Command {
 		Suggest:     true,
 		Flags:       globalFlags(),
 		Commands: []*cli.Command{
-			newAuthCommand(),
+			newIssuesCommand(),
 			newProjectsCommand(),
+			newAuthCommand(),
 		},
 		Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
 			_, err := outputMode(cmd)
