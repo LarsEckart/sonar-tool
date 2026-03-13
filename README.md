@@ -1,3 +1,5 @@
+[![Certified Shovelware](https://justin.searls.co/img/shovelware.svg)](https://justin.searls.co/shovelware/)
+
 # Sonar Issues CLI
 
 Query SonarCloud issues and projects from the command line.
