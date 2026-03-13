@@ -1,4 +1,4 @@
-module github.com/lars/sonar-tool
+module github.com/LarsEckart/sonar-tool
 
 go 1.26
 

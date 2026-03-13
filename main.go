@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/lars/sonar-tool/cmd"
+	"github.com/LarsEckart/sonar-tool/cmd"
 )
 
 var version = "dev"

@@ -9,7 +9,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/lars/sonar-tool/internal/domain"
+	"github.com/LarsEckart/sonar-tool/internal/domain"
 )
 
 var (

@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lars/sonar-tool/internal/auth"
-	configpath "github.com/lars/sonar-tool/internal/config"
-	"github.com/lars/sonar-tool/internal/domain"
-	"github.com/lars/sonar-tool/internal/sonar"
+	"github.com/LarsEckart/sonar-tool/internal/auth"
+	configpath "github.com/LarsEckart/sonar-tool/internal/config"
+	"github.com/LarsEckart/sonar-tool/internal/domain"
+	"github.com/LarsEckart/sonar-tool/internal/sonar"
 )
 
 func TestRecordLiveFixtures(t *testing.T) {

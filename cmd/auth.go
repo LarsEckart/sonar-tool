@@ -10,8 +10,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/lars/sonar-tool/internal/auth"
-	"github.com/lars/sonar-tool/internal/domain"
+	"github.com/LarsEckart/sonar-tool/internal/auth"
+	"github.com/LarsEckart/sonar-tool/internal/domain"
 	cli "github.com/urfave/cli/v3"
 	"golang.org/x/term"
 )

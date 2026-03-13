@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lars/sonar-tool/internal/domain"
+	"github.com/LarsEckart/sonar-tool/internal/domain"
 )
 
 func TestListIssuesAll(t *testing.T) {

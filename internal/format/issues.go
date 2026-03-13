@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/lars/sonar-tool/internal/sonar"
+	"github.com/LarsEckart/sonar-tool/internal/sonar"
 )
 
 func IssuesPlain(issues []sonar.Issue, rules []sonar.Rule, paging sonar.Paging, full bool, all bool) string {

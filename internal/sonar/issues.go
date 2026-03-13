@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lars/sonar-tool/internal/domain"
+	"github.com/LarsEckart/sonar-tool/internal/domain"
 )
 
 type Rule struct {

@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/lars/sonar-tool/internal/format"
-	"github.com/lars/sonar-tool/internal/sonar"
+	"github.com/LarsEckart/sonar-tool/internal/format"
+	"github.com/LarsEckart/sonar-tool/internal/sonar"
 	cli "github.com/urfave/cli/v3"
 )
 
