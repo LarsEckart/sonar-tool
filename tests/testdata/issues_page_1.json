@@ -1,0 +1,105 @@
+{
+  "paging": {
+    "pageIndex": 1,
+    "pageSize": 3,
+    "total": 12
+  },
+  "issues": [
+    {
+      "key": "issue-001",
+      "rule": "java:S5738",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "message": "Example issue message 001.",
+      "component": "example-org:module-001/src/example/File001.java",
+      "project": "project-001",
+      "line": 10,
+      "status": "OPEN",
+      "issueStatus": "OPEN",
+      "assignee": "user001@example.test",
+      "author": "author001@example.test",
+      "tags": [
+        "cert",
+        "cwe",
+        "obsolete"
+      ],
+      "creationDate": "2026-01-01T10:00:00+0000",
+      "updateDate": "2026-01-01T11:00:00+0000",
+      "effort": "15min",
+      "cleanCodeAttribute": "COMPLETE",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ]
+    },
+    {
+      "key": "issue-002",
+      "rule": "java:S5738",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "message": "Example issue message 002.",
+      "component": "example-org:module-002/src/example/File002.java",
+      "project": "project-001",
+      "line": 11,
+      "status": "OPEN",
+      "issueStatus": "OPEN",
+      "assignee": "user002@example.test",
+      "author": "author002@example.test",
+      "tags": [
+        "cert",
+        "cwe",
+        "obsolete"
+      ],
+      "creationDate": "2026-01-02T10:00:00+0000",
+      "updateDate": "2026-01-02T11:00:00+0000",
+      "effort": "15min",
+      "cleanCodeAttribute": "COMPLETE",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ]
+    },
+    {
+      "key": "issue-003",
+      "rule": "java:S5738",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "message": "Example issue message 003.",
+      "component": "example-org:module-003/src/example/File003.java",
+      "project": "project-001",
+      "line": 12,
+      "status": "OPEN",
+      "issueStatus": "OPEN",
+      "assignee": "user003@example.test",
+      "author": "author003@example.test",
+      "tags": [
+        "cert",
+        "cwe",
+        "obsolete"
+      ],
+      "creationDate": "2026-01-03T10:00:00+0000",
+      "updateDate": "2026-01-03T11:00:00+0000",
+      "effort": "15min",
+      "cleanCodeAttribute": "COMPLETE",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "MAINTAINABILITY",
+          "severity": "MEDIUM"
+        }
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "key": "java:S5738",
+      "name": "Example rule name 001"
+    }
+  ]
+}

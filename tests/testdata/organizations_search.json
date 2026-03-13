@@ -1,0 +1,13 @@
+{
+  "organizations": [
+    {
+      "key": "example-org",
+      "name": "Example Organization"
+    }
+  ],
+  "paging": {
+    "pageIndex": 1,
+    "pageSize": 1,
+    "total": 1
+  }
+}

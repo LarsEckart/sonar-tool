@@ -1,0 +1,29 @@
+{
+  "paging": {
+    "pageIndex": 1,
+    "pageSize": 5,
+    "total": 12
+  },
+  "components": [
+    {
+      "key": "project-001",
+      "name": "Example Project 001"
+    },
+    {
+      "key": "project-002",
+      "name": "Example Project 002"
+    },
+    {
+      "key": "project-003",
+      "name": "Example Project 003"
+    },
+    {
+      "key": "project-004",
+      "name": "Example Project 004"
+    },
+    {
+      "key": "project-005",
+      "name": "Example Project 005"
+    }
+  ]
+}

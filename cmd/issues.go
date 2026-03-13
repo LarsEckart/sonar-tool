@@ -82,13 +82,8 @@ func issuesListAction(ctx context.Context, cmd *cli.Command) error {
 	ascending := sortDirection(cmd)
 	resolved := resolvedFilter(cmd)
 
-	resolvedAuth, err := resolveAuth(cmd, false)
-	if err != nil {
-		return err
-	}
-
 	query, err := domain.NormalizeIssuesQuery(domain.IssuesQuery{
-		Org:              resolvedAuth.Org,
+		Org:              cmd.String("org"),
 		Project:          cmd.String("project"),
 		Branch:           cmd.String("branch"),
 		PullRequest:      cmd.String("pull-request"),
@@ -115,6 +110,14 @@ func issuesListAction(ctx context.Context, cmd *cli.Command) error {
 	})
 	if err != nil {
 		return usageError(err.Error(), "use --help for valid issue filters")
+	}
+
+	resolvedAuth, err := resolveAuth(cmd, false)
+	if err != nil {
+		return err
+	}
+	if query.Org == "" {
+		query.Org = resolvedAuth.Org
 	}
 
 	client, err := newSonarClientFromResolvedAuth(cmd, resolvedAuth)
