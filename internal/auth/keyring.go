@@ -7,7 +7,10 @@ import (
 	keyring "github.com/zalando/go-keyring"
 )
 
-const KeyringService = "sonar-issues"
+const (
+	KeyringService       = "sonar-tool"
+	LegacyKeyringService = "sonar-issues"
+)
 
 var ErrSecretNotFound = errors.New("secret not found")
 

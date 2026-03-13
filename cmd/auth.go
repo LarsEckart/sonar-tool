@@ -24,7 +24,7 @@ func newAuthCommand() *cli.Command {
 			{
 				Name:        "login",
 				Usage:       "Save a token to the system keychain and make the profile active",
-				Description: "Stores a Sonar token in the system keychain and records the active host/org profile in ~/.config/sonar-issues/config.json.",
+				Description: "Stores a Sonar token in the system keychain and records the active host/org profile in ~/.config/sonar-tool/config.json.",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "with-token", Aliases: []string{"t"}, Usage: "Token value passed directly on the command line (less safe)"},
 					&cli.BoolFlag{Name: "token-stdin", Usage: "Read the token from stdin"},
@@ -102,7 +102,7 @@ func authCurrentAction(_ context.Context, cmd *cli.Command) error {
 	profile, err := store.CurrentProfile()
 	if err != nil {
 		if errors.Is(err, auth.ErrNoActiveProfile) {
-			return authError("no active auth profile", "run `sonar-issues auth login --org <org>`")
+			return authError("no active auth profile", "run `sonar-tool auth login --org <org>`")
 		}
 		return runtimeError("load active profile", err)
 	}
@@ -207,7 +207,7 @@ func loginToken(cmd *cli.Command) (string, error) {
 		}
 		token := strings.TrimSpace(string(data))
 		if token == "" {
-			return "", usageError("token from stdin was empty", "pipe a token into `sonar-issues auth login --token-stdin`")
+			return "", usageError("token from stdin was empty", "pipe a token into `sonar-tool auth login --token-stdin`")
 		}
 		return token, nil
 	}

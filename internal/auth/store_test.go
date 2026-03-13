@@ -139,6 +139,48 @@ func TestStoreResolveFallsBackToEnvironmentToken(t *testing.T) {
 	}
 }
 
+func TestStoreResolveMigratesLegacyKeychainToken(t *testing.T) {
+	t.Setenv("SONAR_TOKEN", "")
+	t.Setenv("SONAR_TOOL_TOKEN", "")
+	t.Setenv("SONAR_ORG", "")
+	t.Setenv("SONAR_HOST_URL", "")
+
+	configPath := filepath.Join(t.TempDir(), "config.json")
+	secrets := newFakeSecretStore()
+	store := NewStore(configPath, secrets)
+
+	cfg := Config{
+		ActiveProfile: ProfileID("https://sonarcloud.io", "my-org"),
+		Profiles: map[string]Profile{
+			ProfileID("https://sonarcloud.io", "my-org"): {
+				Host: "https://sonarcloud.io",
+				Org:  "my-org",
+			},
+		},
+	}
+	if err := SaveConfig(configPath, cfg); err != nil {
+		t.Fatalf("save config: %v", err)
+	}
+	secrets.values[LegacyKeyringService+"|"+TokenAccount("https://sonarcloud.io", "my-org")] = "legacy-token"
+
+	resolved, err := store.Resolve("", "")
+	if err != nil {
+		t.Fatalf("resolve: %v", err)
+	}
+	if resolved.Token != "legacy-token" {
+		t.Fatalf("resolved token = %q, want %q", resolved.Token, "legacy-token")
+	}
+	if resolved.TokenSource != "keychain" {
+		t.Fatalf("resolved token source = %q, want keychain", resolved.TokenSource)
+	}
+	if _, ok := secrets.values[LegacyKeyringService+"|"+TokenAccount("https://sonarcloud.io", "my-org")]; ok {
+		t.Fatal("expected legacy keychain token to be removed after migration")
+	}
+	if got := secrets.values[KeyringService+"|"+TokenAccount("https://sonarcloud.io", "my-org")]; got != "legacy-token" {
+		t.Fatalf("new keychain token = %q, want %q", got, "legacy-token")
+	}
+}
+
 func TestStoreLogoutAllClearsConfig(t *testing.T) {
 	t.Setenv("SONAR_TOKEN", "")
 	t.Setenv("SONAR_TOOL_TOKEN", "")

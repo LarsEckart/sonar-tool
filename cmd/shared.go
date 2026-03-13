@@ -141,16 +141,16 @@ func resolveAuth(cmd *cli.Command, requireOrg bool) (auth.ResolvedAuth, error) {
 	if err != nil {
 		switch {
 		case errors.Is(err, auth.ErrNoActiveProfile):
-			return auth.ResolvedAuth{}, authError("missing Sonar token", "run `sonar-issues auth login --org <org>` or set SONAR_TOKEN")
+			return auth.ResolvedAuth{}, authError("missing Sonar token", "run `sonar-tool auth login --org <org>` or set SONAR_TOKEN")
 		case errors.Is(err, auth.ErrProfileNotFound):
-			return auth.ResolvedAuth{}, authError("no stored login matches the requested host and org", "run `sonar-issues auth login --org <org>` or set SONAR_TOKEN")
+			return auth.ResolvedAuth{}, authError("no stored login matches the requested host and org", "run `sonar-tool auth login --org <org>` or set SONAR_TOKEN")
 		default:
 			return auth.ResolvedAuth{}, runtimeError("resolve authentication", err)
 		}
 	}
 
 	if requireOrg && resolved.Org == "" {
-		return auth.ResolvedAuth{}, usageError("missing organization", "pass --org, set SONAR_ORG, or log in with `sonar-issues auth login --org <org>`")
+		return auth.ResolvedAuth{}, usageError("missing organization", "pass --org, set SONAR_ORG, or log in with `sonar-tool auth login --org <org>`")
 	}
 
 	return resolved, nil
@@ -161,7 +161,7 @@ func mapSonarError(err error) error {
 	if errors.As(err, &httpErr) {
 		switch httpErr.StatusCode {
 		case http.StatusUnauthorized, http.StatusForbidden:
-			return authError(httpErr.Message, "check your token with `sonar-issues auth check`")
+			return authError(httpErr.Message, "check your token with `sonar-tool auth check`")
 		case http.StatusNotFound:
 			return notFoundError(httpErr.Message)
 		}

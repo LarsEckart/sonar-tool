@@ -4,7 +4,7 @@ Developer notes for the Go CLI in this repo.
 
 ## What this project is
 
-This repo contains a Go rewrite of the older `sonar-issues.js` script.
+This repo contains a Go rewrite of the older `sonar-tool.js` script.
 
 Current goal:
 - query Sonar issues
@@ -20,12 +20,12 @@ Default host is SonarCloud, but the CLI also accepts a custom `--host` for compa
 Implemented commands:
 
 ```text
-sonar-issues auth login
-sonar-issues auth current
-sonar-issues auth logout
-sonar-issues auth check
-sonar-issues projects list
-sonar-issues issues list
+sonar-tool auth login
+sonar-tool auth current
+sonar-tool auth logout
+sonar-tool auth check
+sonar-tool projects list
+sonar-tool issues list
 ```
 
 Global flags are defined in `cmd/root.go`.
@@ -78,7 +78,7 @@ Tokens are stored in the system keychain.
 Non-secret profile metadata is stored in:
 
 ```text
-~/.config/sonar-issues/config.json
+~/.config/sonar-tool/config.json
 ```
 
 The config file must never store the token.
@@ -151,20 +151,16 @@ When you add or change CLI behavior:
 
 ## Known gotchas
 
-### Binary name mismatch
+### Naming migration
 
-The CLI name is `sonar-issues`, but:
+The CLI, config directory, and keychain service now use `sonar-tool`.
+The code still migrates legacy `sonar-issues` config and keychain entries so existing local auth keeps working.
 
-```bash
-go install github.com/LarsEckart/sonar-tool@latest
-```
-
-currently installs a binary named `sonar-tool` because that is the module path.
-
-If you change naming, update:
+If you change naming again, update:
 - `README.md`
 - help text examples
-- any install instructions
+- install instructions
+- auth storage migration behavior
 
 ### Spec vs implementation
 

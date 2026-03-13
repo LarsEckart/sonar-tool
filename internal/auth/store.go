@@ -49,9 +49,11 @@ func (s *Store) Login(host, org, token string) error {
 	cfg.Profiles[profileID] = Profile{Host: host, Org: org}
 	cfg.ActiveProfile = profileID
 
-	if err := s.secrets.Set(KeyringService, TokenAccount(host, org), token); err != nil {
+	account := TokenAccount(host, org)
+	if err := s.secrets.Set(KeyringService, account, token); err != nil {
 		return fmt.Errorf("store token in keychain: %w", err)
 	}
+	_ = s.secrets.Delete(LegacyKeyringService, account)
 	if err := SaveConfig(s.configPath, cfg); err != nil {
 		return err
 	}
@@ -89,8 +91,8 @@ func (s *Store) Logout(host, org string) error {
 		return ErrProfileNotFound
 	}
 
-	if err := s.secrets.Delete(KeyringService, TokenAccount(profile.Host, profile.Org)); err != nil && !errors.Is(err, ErrSecretNotFound) {
-		return fmt.Errorf("remove token from keychain: %w", err)
+	if err := s.deleteToken(profile.Host, profile.Org); err != nil {
+		return err
 	}
 
 	delete(cfg.Profiles, profileID)
@@ -102,8 +104,8 @@ func (s *Store) Logout(host, org string) error {
 }
 
 func (s *Store) LogoutAll() error {
-	if err := s.secrets.DeleteAll(KeyringService); err != nil {
-		return fmt.Errorf("remove tokens from keychain: %w", err)
+	if err := s.deleteAllTokens(); err != nil {
+		return err
 	}
 
 	cfg := Config{Profiles: map[string]Profile{}}
@@ -170,12 +172,12 @@ func (s *Store) Resolve(flagHost, flagOrg string) (ResolvedAuth, error) {
 	if org != "" {
 		profileID := ProfileID(host, org)
 		if profile, ok := cfg.Profiles[profileID]; ok {
-			token, err := s.secrets.Get(KeyringService, TokenAccount(profile.Host, profile.Org))
+			token, err := s.tokenFromKeychain(profile.Host, profile.Org)
 			if err != nil {
 				if errors.Is(err, ErrSecretNotFound) {
 					return ResolvedAuth{}, ErrProfileNotFound
 				}
-				return ResolvedAuth{}, fmt.Errorf("load token from keychain: %w", err)
+				return ResolvedAuth{}, err
 			}
 
 			return ResolvedAuth{Host: profile.Host, Org: profile.Org, Token: token, TokenSource: "keychain"}, nil
@@ -194,6 +196,64 @@ func (s *Store) Resolve(flagHost, flagOrg string) (ResolvedAuth, error) {
 	}
 
 	return ResolvedAuth{}, ErrProfileNotFound
+}
+
+func (s *Store) tokenFromKeychain(host, org string) (string, error) {
+	account := TokenAccount(host, org)
+
+	token, err := s.secrets.Get(KeyringService, account)
+	if err == nil {
+		return token, nil
+	}
+	if !errors.Is(err, ErrSecretNotFound) {
+		return "", fmt.Errorf("load token from keychain: %w", err)
+	}
+
+	legacyToken, legacyErr := s.secrets.Get(LegacyKeyringService, account)
+	if legacyErr == nil {
+		if setErr := s.secrets.Set(KeyringService, account, legacyToken); setErr != nil {
+			return "", fmt.Errorf("migrate token to keychain: %w", setErr)
+		}
+		_ = s.secrets.Delete(LegacyKeyringService, account)
+		return legacyToken, nil
+	}
+	if errors.Is(legacyErr, ErrSecretNotFound) {
+		return "", ErrSecretNotFound
+	}
+	return "", fmt.Errorf("load token from keychain: %w", legacyErr)
+}
+
+func (s *Store) deleteToken(host, org string) error {
+	account := TokenAccount(host, org)
+	var deleteErrs []error
+
+	if err := s.secrets.Delete(KeyringService, account); err != nil && !errors.Is(err, ErrSecretNotFound) {
+		deleteErrs = append(deleteErrs, fmt.Errorf("remove token from keychain: %w", err))
+	}
+	if err := s.secrets.Delete(LegacyKeyringService, account); err != nil && !errors.Is(err, ErrSecretNotFound) {
+		deleteErrs = append(deleteErrs, fmt.Errorf("remove token from legacy keychain: %w", err))
+	}
+	if len(deleteErrs) > 0 {
+		return errors.Join(deleteErrs...)
+	}
+
+	return nil
+}
+
+func (s *Store) deleteAllTokens() error {
+	var deleteErrs []error
+
+	if err := s.secrets.DeleteAll(KeyringService); err != nil {
+		deleteErrs = append(deleteErrs, fmt.Errorf("remove tokens from keychain: %w", err))
+	}
+	if err := s.secrets.DeleteAll(LegacyKeyringService); err != nil {
+		deleteErrs = append(deleteErrs, fmt.Errorf("remove tokens from legacy keychain: %w", err))
+	}
+	if len(deleteErrs) > 0 {
+		return errors.Join(deleteErrs...)
+	}
+
+	return nil
 }
 
 func nextActiveProfileID(profiles map[string]Profile) string {

@@ -1,8 +1,8 @@
-# Sonar Issues CLI Spec
+# Sonar Tool CLI Spec
 
 Status: draft v1
 
-This document defines the Go rewrite of `sonar-issues.js`.
+This document defines the Go rewrite of `sonar-tool.js`.
 
 ## 1. Goal
 
@@ -43,9 +43,9 @@ From `jirafluence`:
 
 ## 4. Proposed binary name
 
-`sonar-issues`
+`sonar-tool`
 
-Reason: keep continuity with the current script and existing muscle memory.
+Reason: align the binary, module path, docs, config directory, and keychain service under one name.
 
 ## 5. UX principles
 
@@ -60,7 +60,7 @@ Reason: keep continuity with the current script and existing muscle memory.
 ## 6. Command tree
 
 ```text
-sonar-issues [global flags] <command> [subcommand] [flags]
+sonar-tool [global flags] <command> [subcommand] [flags]
 
 Commands:
   issues list        List Sonar issues
@@ -143,7 +143,7 @@ Use the same overall model as the official Sonar CLI:
 - Windows: Credential Manager
 
 **Non-secret metadata:** XDG-style config file
-- path: `~/.config/sonar-issues/config.json`
+- path: `~/.config/sonar-tool/config.json`
 - stores active profile metadata only
 - never stores the token itself
 
@@ -162,7 +162,7 @@ Suggested config shape:
 ```
 
 Suggested keychain naming:
-- service: `sonar-issues`
+- service: `sonar-tool`
 - key/account: `token:<host>:<org>`
 
 This gives us:
@@ -180,7 +180,7 @@ List issues for a project or an organization.
 ### Usage
 
 ```text
-sonar-issues issues list [flags]
+sonar-tool issues list [flags]
 ```
 
 ### Required inputs
@@ -314,7 +314,7 @@ List projects in an organization.
 ### Usage
 
 ```text
-sonar-issues projects list [flags]
+sonar-tool projects list [flags]
 ```
 
 ### Required inputs
@@ -384,7 +384,7 @@ Save a token to the system keychain and make that profile active.
 ### Usage
 
 ```text
-sonar-issues auth login --org <org> [flags]
+sonar-tool auth login --org <org> [flags]
 ```
 
 ### Flags
@@ -419,7 +419,7 @@ Show the currently active auth profile.
 ### Usage
 
 ```text
-sonar-issues auth current
+sonar-tool auth current
 ```
 
 ### Behavior
@@ -435,7 +435,7 @@ Remove stored auth for one profile or all profiles.
 ### Usage
 
 ```text
-sonar-issues auth logout [flags]
+sonar-tool auth logout [flags]
 ```
 
 ### Flags
@@ -461,7 +461,7 @@ Validate credentials and optionally verify org access.
 ### Usage
 
 ```text
-sonar-issues auth check [flags]
+sonar-tool auth check [flags]
 ```
 
 ### Flags
@@ -508,7 +508,7 @@ Examples:
 
 ```text
 error: missing Sonar token
-hint: run `sonar-issues auth login --org <org>` or set SONAR_TOKEN
+hint: run `sonar-tool auth login --org <org>` or set SONAR_TOKEN
 ```
 
 ```text
@@ -705,47 +705,47 @@ Test small pure helpers directly:
 
 ```bash
 # login like the official sonar CLI
-sonar-issues auth login -o example-org --with-token "$SONAR_TOKEN"
+sonar-tool auth login -o example-org --with-token "$SONAR_TOKEN"
 
 # safer non-interactive login
-printf '%s' "$SONAR_TOKEN" | sonar-issues auth login -o example-org --token-stdin
+printf '%s' "$SONAR_TOKEN" | sonar-tool auth login -o example-org --token-stdin
 
 # show active profile
-sonar-issues auth current
+sonar-tool auth current
 
 # verify token works
-sonar-issues auth check
+sonar-tool auth check
 
 # verify org access
-sonar-issues auth check --org my-org
+sonar-tool auth check --org my-org
 
 # list projects in org
-sonar-issues projects list --org my-org
+sonar-tool projects list --org my-org
 
 # list all projects in org as JSON
-sonar-issues projects list --org my-org --all --json
+sonar-tool projects list --org my-org --all --json
 
 # list issues for one project
-sonar-issues issues list --project my-project --org my-org
+sonar-tool issues list --project my-project --org my-org
 
 # list only unresolved critical bugs
-sonar-issues issues list \
+sonar-tool issues list \
   --project my-project \
   --types BUG \
   --severities CRITICAL,BLOCKER \
   --unresolved
 
 # issues on new code only
-sonar-issues issues list --project my-project --new
+sonar-tool issues list --project my-project --new
 
 # issues for a pull request
-sonar-issues issues list --project my-project --pr 123 --json
+sonar-tool issues list --project my-project --pr 123 --json
 
 # markdown report
-sonar-issues issues list --project my-project --full --markdown > report.md
+sonar-tool issues list --project my-project --full --markdown > report.md
 
 # fetch everything for scripting
-sonar-issues issues list --org my-org --all --json | jq '.issues[] | .key'
+sonar-tool issues list --org my-org --all --json | jq '.issues[] | .key'
 ```
 
 ## 21. Open questions for later, not blockers

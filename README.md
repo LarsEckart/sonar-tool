@@ -1,6 +1,6 @@
 [![Certified Shovelware](https://justin.searls.co/img/shovelware.svg)](https://justin.searls.co/shovelware/)
 
-# Sonar Issues CLI
+# Sonar Tool CLI
 
 Query SonarCloud issues and projects from the command line.
 
@@ -17,7 +17,7 @@ This repo now contains a Go CLI with:
  token from env or keychain
             |
             v
-      sonar-issues
+      sonar-tool
        |   |   |
        |   |   +--> auth
        |   +------> projects list
@@ -29,7 +29,8 @@ This repo now contains a Go CLI with:
 
 > [!NOTE]
 > This README is for the Go CLI.
-> The older Node script is still in the repo as `sonar-issues.js`, but the Go tool is the current implementation.
+> The older Node script is still in the repo as `sonar-tool.js`, but the Go tool is the current implementation.
+> Stored auth now uses `~/.config/sonar-tool/config.json`, and legacy `sonar-issues` config/keychain entries are migrated automatically.
 
 ## Install
 
@@ -38,8 +39,8 @@ This repo now contains a Go CLI with:
 This is the clearest option because it gives you the expected binary name:
 
 ```bash
-go build -o sonar-issues .
-./sonar-issues --help
+go build -o sonar-tool .
+./sonar-tool --help
 ```
 
 ### Install with Go
@@ -49,9 +50,7 @@ go install github.com/LarsEckart/sonar-tool@latest
 ```
 
 > [!NOTE]
-> `go install` currently produces a binary named `sonar-tool` because that is the module path.
-> The CLI itself uses the command name `sonar-issues` in help and examples.
-> You can either rename the binary or replace `sonar-issues` with `sonar-tool` in the examples below.
+> The binary name, help text, and examples now consistently use `sonar-tool`.
 
 ## Authentication
 
@@ -65,35 +64,35 @@ You can authenticate in two ways:
 Interactive login:
 
 ```bash
-sonar-issues auth login --org my-org
+sonar-tool auth login --org my-org
 ```
 
 Safer non-interactive login:
 
 ```bash
-printf '%s' "$SONAR_TOKEN" | sonar-issues auth login --org my-org --token-stdin
+printf '%s' "$SONAR_TOKEN" | sonar-tool auth login --org my-org --token-stdin
 ```
 
 Less safe compatibility option:
 
 ```bash
-sonar-issues auth login --org my-org --with-token "$SONAR_TOKEN"
+sonar-tool auth login --org my-org --with-token "$SONAR_TOKEN"
 ```
 
 Useful auth commands:
 
 ```bash
-sonar-issues auth current
-sonar-issues auth check
-sonar-issues auth check --org my-org
-sonar-issues auth logout
-sonar-issues auth logout --all --force
+sonar-tool auth current
+sonar-tool auth check
+sonar-tool auth check --org my-org
+sonar-tool auth logout
+sonar-tool auth logout --all --force
 ```
 
 What gets stored:
 
 - **token**: system keychain
-- **active profile metadata**: `~/.config/sonar-issues/config.json`
+- **active profile metadata**: `~/.config/sonar-tool/config.json`
 
 The config file stores host and org metadata, not the token itself.
 
@@ -118,16 +117,16 @@ export SONAR_TOOL_TOKEN="your_token_here"
 
 ```bash
 # 1) log in once
-sonar-issues auth login --org my-org
+sonar-tool auth login --org my-org
 
 # 2) verify auth
-sonar-issues auth check
+sonar-tool auth check
 
 # 3) list projects in the active org
-sonar-issues projects list
+sonar-tool projects list
 
 # 4) list issues for one project
-sonar-issues issues list --project my-project
+sonar-tool issues list --project my-project
 ```
 
 ## Commands
@@ -137,10 +136,10 @@ sonar-issues issues list --project my-project
 Manage stored Sonar auth profiles.
 
 ```bash
-sonar-issues auth login --org my-org
-sonar-issues auth current
-sonar-issues auth check
-sonar-issues auth logout
+sonar-tool auth login --org my-org
+sonar-tool auth current
+sonar-tool auth check
+sonar-tool auth logout
 ```
 
 ### `projects list`
@@ -151,22 +150,22 @@ Plain output prints one project key per line, which makes it easy to pipe into o
 
 ```bash
 # use org from active login or SONAR_ORG
-sonar-issues projects list
+sonar-tool projects list
 
 # explicit org
-sonar-issues projects list --org my-org
+sonar-tool projects list --org my-org
 
 # paginate
-sonar-issues projects list --org my-org --limit 50 --page 2
+sonar-tool projects list --org my-org --limit 50 --page 2
 
 # fetch all pages
-sonar-issues projects list --org my-org --all
+sonar-tool projects list --org my-org --all
 
 # JSON for scripts
-sonar-issues projects list --org my-org --json
+sonar-tool projects list --org my-org --json
 
 # Markdown for docs or tickets
-sonar-issues projects list --org my-org --markdown
+sonar-tool projects list --org my-org --markdown
 ```
 
 ### `issues list`
@@ -177,22 +176,22 @@ Common cases:
 
 ```bash
 # issues for one project
-sonar-issues issues list --project my-project
+sonar-tool issues list --project my-project
 
 # full plain-text details
-sonar-issues issues list --project my-project --full
+sonar-tool issues list --project my-project --full
 
 # org-wide search
-sonar-issues issues list --org my-org
+sonar-tool issues list --org my-org
 
 # JSON for scripts
-sonar-issues issues list --project my-project --json
+sonar-tool issues list --project my-project --json
 
 # Markdown report
-sonar-issues issues list --project my-project --markdown > issues.md
+sonar-tool issues list --project my-project --markdown > issues.md
 
 # fetch all pages
-sonar-issues issues list --project my-project --all --json
+sonar-tool issues list --project my-project --all --json
 ```
 
 ## Common issue filters
@@ -200,54 +199,54 @@ sonar-issues issues list --project my-project --all --json
 ### Scope
 
 ```bash
-sonar-issues issues list --project my-project
-sonar-issues issues list --project my-project --branch feature/my-branch
-sonar-issues issues list --project my-project --pr 123
+sonar-tool issues list --project my-project
+sonar-tool issues list --project my-project --branch feature/my-branch
+sonar-tool issues list --project my-project --pr 123
 ```
 
 ### Severity and type
 
 ```bash
-sonar-issues issues list --project my-project --types BUG,VULNERABILITY
-sonar-issues issues list --project my-project --severities CRITICAL,BLOCKER
-sonar-issues issues list --project my-project --impact-severities HIGH,BLOCKER
-sonar-issues issues list --project my-project --qualities SECURITY
+sonar-tool issues list --project my-project --types BUG,VULNERABILITY
+sonar-tool issues list --project my-project --severities CRITICAL,BLOCKER
+sonar-tool issues list --project my-project --impact-severities HIGH,BLOCKER
+sonar-tool issues list --project my-project --qualities SECURITY
 ```
 
 ### Status and ownership
 
 ```bash
-sonar-issues issues list --project my-project --unresolved
-sonar-issues issues list --project my-project --resolved=true
-sonar-issues issues list --project my-project --statuses OPEN,CONFIRMED
-sonar-issues issues list --project my-project --assignee __me__
-sonar-issues issues list --project my-project --author dev@example.com
+sonar-tool issues list --project my-project --unresolved
+sonar-tool issues list --project my-project --resolved=true
+sonar-tool issues list --project my-project --statuses OPEN,CONFIRMED
+sonar-tool issues list --project my-project --assignee __me__
+sonar-tool issues list --project my-project --author dev@example.com
 ```
 
 ### Rules, tags, and languages
 
 ```bash
-sonar-issues issues list --project my-project --rules java:S1068
-sonar-issues issues list --project my-project --tags security,owasp
-sonar-issues issues list --project my-project --languages go,ts
+sonar-tool issues list --project my-project --rules java:S1068
+sonar-tool issues list --project my-project --tags security,owasp
+sonar-tool issues list --project my-project --languages go,ts
 ```
 
 ### Time filters
 
 ```bash
-sonar-issues issues list --project my-project --new
-sonar-issues issues list --project my-project --created-after 2026-01-01
-sonar-issues issues list --project my-project --created-before 2026-01-31
-sonar-issues issues list --project my-project --created-in-last 7d
-sonar-issues issues list --project my-project --created-in-last 1m2w
+sonar-tool issues list --project my-project --new
+sonar-tool issues list --project my-project --created-after 2026-01-01
+sonar-tool issues list --project my-project --created-before 2026-01-31
+sonar-tool issues list --project my-project --created-in-last 7d
+sonar-tool issues list --project my-project --created-in-last 1m2w
 ```
 
 ### Sorting and paging
 
 ```bash
-sonar-issues issues list --project my-project --sort CREATION_DATE --desc
-sonar-issues issues list --project my-project --limit 20 --page 2
-sonar-issues issues list --project my-project --all
+sonar-tool issues list --project my-project --sort CREATION_DATE --desc
+sonar-tool issues list --project my-project --limit 20 --page 2
+sonar-tool issues list --project my-project --all
 ```
 
 ## Output modes
@@ -265,8 +264,8 @@ The tool supports three output modes:
 Good for terminal use.
 
 ```bash
-sonar-issues issues list --project my-project
-sonar-issues issues list --project my-project --full
+sonar-tool issues list --project my-project
+sonar-tool issues list --project my-project --full
 ```
 
 ### JSON
@@ -274,8 +273,8 @@ sonar-issues issues list --project my-project --full
 Good for `jq`, scripts, and automation.
 
 ```bash
-sonar-issues issues list --project my-project --json | jq '.issues[] | .key'
-sonar-issues projects list --org my-org --json | jq '.projects[] | .key'
+sonar-tool issues list --project my-project --json | jq '.issues[] | .key'
+sonar-tool projects list --org my-org --json | jq '.projects[] | .key'
 ```
 
 ### Markdown
@@ -283,7 +282,7 @@ sonar-issues projects list --org my-org --json | jq '.projects[] | .key'
 Good for GitHub, Jira, and docs.
 
 ```bash
-sonar-issues issues list --project my-project --markdown > sonar-report.md
+sonar-tool issues list --project my-project --markdown > sonar-report.md
 ```
 
 ## Global flags
@@ -317,14 +316,14 @@ These flags work across commands:
 List projects, then inspect one project:
 
 ```bash
-sonar-issues projects list --org my-org
-sonar-issues issues list --org my-org --project my-project
+sonar-tool projects list --org my-org
+sonar-tool issues list --org my-org --project my-project
 ```
 
 Generate a Markdown report for a PR:
 
 ```bash
-sonar-issues issues list \
+sonar-tool issues list \
   --project my-project \
   --pr 123 \
   --markdown > pr-sonar-report.md
@@ -333,7 +332,7 @@ sonar-issues issues list \
 Find unresolved critical bugs:
 
 ```bash
-sonar-issues issues list \
+sonar-tool issues list \
   --project my-project \
   --types BUG \
   --severities CRITICAL,BLOCKER \
@@ -375,4 +374,4 @@ Helpful top-level files and directories:
 - `internal/` - auth, Sonar client, formatters, validation
 - `tests/` - subprocess CLI tests and fixtures
 - `CLI_SPEC.md` - planned CLI shape and design notes
-- `sonar-issues.js` - legacy Node script
+- `sonar-tool.js` - legacy Node script

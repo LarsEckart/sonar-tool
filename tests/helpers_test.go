@@ -43,12 +43,12 @@ func buildBinary(t *testing.T) string {
 	t.Helper()
 	buildOnce.Do(func() {
 		root := moduleRoot(t)
-		binDir, err := os.MkdirTemp("", "sonar-issues-testbin-")
+		binDir, err := os.MkdirTemp("", "sonar-tool-testbin-")
 		if err != nil {
 			buildErr = fmt.Errorf("create temp build dir: %w", err)
 			return
 		}
-		binaryPath = filepath.Join(binDir, "sonar-issues.testbin")
+		binaryPath = filepath.Join(binDir, "sonar-tool.testbin")
 		cmd := exec.Command("go", "build", "-o", binaryPath, ".")
 		cmd.Dir = root
 		output, err := cmd.CombinedOutput()
@@ -168,7 +168,7 @@ func serveFixture(t *testing.T, w http.ResponseWriter, path string) {
 func writeConfigFixture(t *testing.T, host, org string) string {
 	t.Helper()
 	configHome := t.TempDir()
-	configDir := filepath.Join(configHome, "sonar-issues")
+	configDir := filepath.Join(configHome, "sonar-tool")
 	if err := os.MkdirAll(configDir, 0o755); err != nil {
 		t.Fatalf("create config dir: %v", err)
 	}

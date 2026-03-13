@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 /**
- * SonarCloud Issues CLI
+ * Sonar Tool CLI
  * 
  * Search and retrieve issues from SonarCloud.
  * 
@@ -10,14 +10,14 @@
  *   export SONAR_ORG="your_organization"  # optional default
  * 
  * Usage:
- *   sonar-issues.js --project my_project
- *   sonar-issues.js --project my_project --types BUG,VULNERABILITY
- *   sonar-issues.js --project my_project --severities CRITICAL,BLOCKER
- *   sonar-issues.js --org my-org  # all issues in organization
- *   sonar-issues.js --project my_project --branch feature/xyz
- *   sonar-issues.js --project my_project --new  # only new issues (since leak period)
- *   sonar-issues.js --project my_project -n 20  # limit results
- *   sonar-issues.js --project my_project --json  # JSON output
+ *   sonar-tool.js --project my_project
+ *   sonar-tool.js --project my_project --types BUG,VULNERABILITY
+ *   sonar-tool.js --project my_project --severities CRITICAL,BLOCKER
+ *   sonar-tool.js --org my-org  # all issues in organization
+ *   sonar-tool.js --project my_project --branch feature/xyz
+ *   sonar-tool.js --project my_project --new  # only new issues (since leak period)
+ *   sonar-tool.js --project my_project -n 20  # limit results
+ *   sonar-tool.js --project my_project --json  # JSON output
  */
 
 const https = require('https');
@@ -205,9 +205,9 @@ function parseArgs(args) {
 }
 
 function printHelp() {
-  console.log(`SonarCloud Issues CLI
+  console.log(`Sonar Tool CLI
 
-Usage: sonar-issues.js [options]
+Usage: sonar-tool.js [options]
 
 Required:
   -p, --project <key>       Project key (or use -p alone to list all projects)
@@ -251,14 +251,14 @@ Environment:
   SONAR_ORG                 Default organization
 
 Examples:
-  sonar-issues.js -o my-org -p                # List all projects
-  sonar-issues.js -o my-org -p --markdown     # List projects as markdown
-  sonar-issues.js -p my_project -o my-org     # Issues for a project
-  sonar-issues.js -p my_project --types BUG,VULNERABILITY
-  sonar-issues.js -p my_project --severities CRITICAL,BLOCKER --unresolved
-  sonar-issues.js -p my_project --new -n 50
-  sonar-issues.js -p my_project --branch main --created-in-last 7d
-  sonar-issues.js -o my-org --qualities SECURITY --json
+  sonar-tool.js -o my-org -p                # List all projects
+  sonar-tool.js -o my-org -p --markdown     # List projects as markdown
+  sonar-tool.js -p my_project -o my-org     # Issues for a project
+  sonar-tool.js -p my_project --types BUG,VULNERABILITY
+  sonar-tool.js -p my_project --severities CRITICAL,BLOCKER --unresolved
+  sonar-tool.js -p my_project --new -n 50
+  sonar-tool.js -p my_project --branch main --created-in-last 7d
+  sonar-tool.js -o my-org --qualities SECURITY --json
 `);
 }
 

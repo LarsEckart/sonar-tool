@@ -16,9 +16,9 @@ func New(version string, stdout, stderr io.Writer) *cli.Command {
 	}
 
 	return &cli.Command{
-		Name:        "sonar-issues",
+		Name:        "sonar-tool",
 		Usage:       "Query SonarCloud projects and issues",
-		UsageText:   "sonar-issues [global flags] <command> [subcommand] [flags]",
+		UsageText:   "sonar-tool [global flags] <command> [subcommand] [flags]",
 		Description: "Small, script-friendly SonarCloud CLI with secure local auth storage.",
 		Version:     version,
 		Writer:      stdout,
